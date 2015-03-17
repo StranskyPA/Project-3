@@ -32,7 +32,7 @@ public class CustomServer {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		CustomServer s = new CustomServer(8888);
+		CustomServer s = new CustomServer(8080);
 		s.listen();
 	}
 }
