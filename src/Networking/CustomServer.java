@@ -5,14 +5,11 @@ import java.io.*;
 
 public class CustomServer {
 	private DatagramSocket socket;
-	//private DatagramPacket packet;
 	private ServerSocket textSocket;
-	//private final static int PACKETSIZE = 512;
 	
 	public CustomServer(int port) throws IOException {
 		textSocket = new ServerSocket(port);
 		socket = new DatagramSocket(port);
-		//packet = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
 		System.out.println("Server IP address: " + socket.getLocalSocketAddress());
 	}
 	

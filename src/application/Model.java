@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.concurrent.ArrayBlockingQueue;
 
+import Networking.TalkThread;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.text.Text;
@@ -15,8 +17,9 @@ public class Model {
 	public String lastMessage = "none";
 	private String UserLast = "UserLast";
 	private String Receivedlast = "ReceivedLast";
-	
 	public String endOfFile = " ~END_OF_CHAT~ ";
+	private TalkThread talker;
+	private ArrayBlockingQueue<String> channel = new ArrayBlockingQueue<String>(2, true);;
 	
 	private ObservableList<Text> chatList = 
 			FXCollections.observableArrayList();
@@ -32,6 +35,7 @@ public class Model {
 	}
 	
 	public void receiveMessage(Text message){
+		
 		if (message.getText().length() > 0){
 			Text text = new Text();
 			Text newline = new Text();
@@ -81,8 +85,7 @@ public class Model {
 				chatList.add(text);
 				addChatIndex();
 				this.lastMessage = UserLast;
-			}
-			
+			}			
 		}
 	}
 	
@@ -106,4 +109,34 @@ public class Model {
 			e.printStackTrace();
 		}		
 	}
+	
+	private void send(String msg, String host, int port) {
+		if (talker != null && talker.isGoing()) {
+			talker.halt();
+		}
+		talker = new TalkThread(msg, host, port, channel);
+		//new Receiver().start();
+		talker.start();		
+	}
+	
+	private class Receiver extends Thread {
+		public void run() {
+			String message = "";
+			while (talker.isGoing()) {
+				String line;
+				try {
+					line = channel.take();
+					message = message + "\n" + line;
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			Text object = null;
+			object.setText(message);
+			receiveMessage(object);
+		}
+	}
 }
+
+
