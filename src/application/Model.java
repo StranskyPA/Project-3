@@ -6,20 +6,25 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import Networking.SocketEchoerThread;
 import Networking.TalkThread;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.text.Text;
 
-public class Model {
+public class Model extends Main{
 	
 	public int chatIndex = 0;
 	public String lastMessage = "none";
 	private String UserLast = "UserLast";
 	private String Receivedlast = "ReceivedLast";
 	public String endOfFile = " ~END_OF_CHAT~ ";
-	private TalkThread talker;
-	private ArrayBlockingQueue<String> channel = new ArrayBlockingQueue<String>(2, true);;
+	/*private TalkThread talker;
+	private ArrayBlockingQueue<String> channel;
+	private SocketEchoerThread sockets;
+	private String host = "10.253.197.122";
+	private int port = 8888;*/
 	
 	private ObservableList<Text> chatList = 
 			FXCollections.observableArrayList();
@@ -27,6 +32,13 @@ public class Model {
 	ObservableList<Text> getObservable(){
 		return chatList;
 	}
+	
+	/*public void setHost(String host){
+		this.host = host;
+	}
+	public void setPort(String port){
+		this.port = Integer.parseInt(port);
+	}*/
 	
 	public void initializeChat(Text message){
 		chatList.add(message);
@@ -110,18 +122,22 @@ public class Model {
 		}		
 	}
 	
-	private void send(String msg, String host, int port) {
+	/*public void send(String msg) {
 		if (talker != null && talker.isGoing()) {
 			talker.halt();
 		}
-		talker = new TalkThread(msg, host, port, channel);
-		//new Receiver().start();
+		talker = new TalkThread(msg, this.host, this.port, channel);
 		talker.start();		
 	}
 	
-	private class Receiver extends Thread {
-		public void run() {
+	public void setSockets(SocketEchoerThread sockets) {
+		this.sockets = sockets;
+	}
+	
+	public class Receiver extends Thread {
+		/*public void run() {
 			String message = "";
+			channel = new ArrayBlockingQueue<String>(2, true);
 			while (talker.isGoing()) {
 				String line;
 				try {
@@ -137,6 +153,22 @@ public class Model {
 			receiveMessage(object);
 		}
 	}
+		private SocketEchoerThread sockets;
+		String line;
+		
+		public Receiver(SocketEchoerThread sockets) {
+			this.sockets = sockets;
+		}
+		
+		public void run() {
+			line = null;
+			line = sockets.getString();
+			Text object = null;
+			object.setText(line);
+			receiveMessage(object);
+		}
+	}*/
+	
 }
 
 

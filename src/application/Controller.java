@@ -2,18 +2,24 @@ package application;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import packet.Packetizer;
+import Networking.SocketEchoerThread;
+import Networking.TalkThread;
 
 import com.sun.javafx.scene.control.skin.CustomColorDialog;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
@@ -47,11 +53,18 @@ public class Controller {
 	@FXML
 	private MenuItem quitApp;
 	@FXML
+	private MenuItem inviteChat;
+	@FXML
 	private MenuItem saveChat;
 	@FXML
 	private TextField messageText;
 	@FXML
 	private ScrollPane scroll;
+	private SocketEchoerThread sockets;
+	private TalkThread talker;
+	private ArrayBlockingQueue<String> channel;
+	private String newHost = "10.253.197.122";
+	private int newPort = 8888;
 	
 	private Model model = new Model();
 	private Packetizer packetizer = new Packetizer(1024);
@@ -79,6 +92,39 @@ public class Controller {
 		String msg = f.toString();
 		text.setText(msg);
 		model.addMessage(text);
+	}
+	
+	@FXML
+	public void inviteChat(){
+		Stage newStage = new Stage();
+		VBox comp = new VBox();
+		TextField host = new TextField();
+		Label hostLabel = new Label("Host: ");
+		TextField port = new TextField();
+		Label portLabel = new Label("Port: ");
+		comp.getChildren().addAll(hostLabel, host, portLabel, port);
+		host.setOnAction(new EventHandler<ActionEvent>() {
+		    @Override public void handle(ActionEvent event) {
+		        sendInfo(host, port);
+		    }     
+		});  
+		port.setOnAction(new EventHandler<ActionEvent>() {
+		    @Override public void handle(ActionEvent event) {
+		    	sendInfo(host, port);
+		    }     
+		}); 
+
+		Scene stageScene = new Scene(comp, 300, 150);
+		newStage.setTitle("Invite to Chat");
+		newStage.setScene(stageScene);
+		newStage.show();
+	}
+	
+	private void sendInfo(TextField host, TextField port){
+		System.out.println(host.getText());
+		System.out.println(port.getText());
+		newHost = host.getText();
+		newPort = Integer.parseInt(port.getText());
 	}
 	
 	@FXML
@@ -127,16 +173,20 @@ public class Controller {
 	
 	@FXML
 	public void saveChat() throws IOException{
+		System.out.println(("user.dir") + "\\ChatLogs");
 		final FileChooser fileChooser = new FileChooser();
 	    File listFileDirectory = new File(System.getProperty("user.dir"), "ChatLogs");
 	    listFileDirectory.mkdirs();
 	    fileChooser.setInitialDirectory(
 	            new File(System.getProperty("user.dir") + "\\ChatLogs"));
 	    listFileDirectory = fileChooser.showSaveDialog(applicationBounds.getScene().getWindow());
-		
 	    if (listFileDirectory != null){
 	    	model.saveChat(listFileDirectory);
 	    }
+	}
+	
+	public Model getModel() {
+		return model;
 	}
 	
 	@FXML
@@ -149,6 +199,35 @@ public class Controller {
         stage.setTitle("ChatApp");
         stage.setScene(new Scene(root, 640, 500));
         stage.show();
+	}
+	
+	public void send(String msg) {
+		if (talker != null && talker.isGoing()) {
+			talker.halt();
+		}
+		talker = new TalkThread(msg, this.newHost, this.newPort, channel);
+		talker.start();		
+	}
+	
+	public void setSockets(SocketEchoerThread sockets) {
+		this.sockets = sockets;
+	}
+	
+	public class Receiver extends Thread {
+		private SocketEchoerThread sockets;
+		String line;
+		
+		public Receiver(SocketEchoerThread sockets) {
+			this.sockets = sockets;
+		}
+		
+		public void run() {
+			line = null;
+			line = sockets.getString();
+			Text object = null;
+			object.setText(line);
+			model.receiveMessage(object);
+		}
 	}
 
 }

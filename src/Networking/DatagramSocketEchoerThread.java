@@ -17,6 +17,7 @@ public class DatagramSocketEchoerThread {
 	private final static int PACKETSIZE = 512;
 	
 	public DatagramSocketEchoerThread(DatagramSocket newSocket) {
+		System.out.println("test3");
 		socket = newSocket;
 		packet = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);;
 		packeter = new Packetizer(PACKETSIZE);
@@ -24,6 +25,7 @@ public class DatagramSocketEchoerThread {
 	}
 	
 	public void run() {
+		System.out.println("running3");
 		getNewPacket();
 		System.out.println("Accepted Packet From: " + socket.getInetAddress());
 		Packet newPacket = new Packet(packet);
