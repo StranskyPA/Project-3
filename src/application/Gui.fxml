@@ -15,7 +15,7 @@
           <items>
             <MenuItem fx:id="newChat" mnemonicParsing="false" onAction="#newMenu" text="New Chat" />
             <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Invite to Chat" />
+                  <MenuItem fx:id="inviteChat" mnemonicParsing="false" onAction="#inviteChat" text="Invite to Chat" />
                   <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="closeChat" mnemonicParsing="false" onAction="#closeWindow" text="Close Chat" />
                   <SeparatorMenuItem mnemonicParsing="false" />

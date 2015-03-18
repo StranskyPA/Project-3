@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class PacketTest {
-	private final int ID = 1;
+	private final int ID = 128;
 	private final int PART = 2;
 	private final int NUM_PARTS = 3;
 	private final int DATA_SIZE = 4;
@@ -16,7 +16,7 @@ public class PacketTest {
 	public void userVerifiedTest() {
 		Packet testPacket = new Packet(ID, PART, NUM_PARTS, DATA_SIZE, DATA);
 		
-		System.out.println("ID: " + testPacket.getID());
+		System.out.println("ID: " + testPacket.getID() + " (" + ID + " expected)");
 		System.out.println("Part " + testPacket.getPart() + " of " + testPacket.getNumParts());
 		System.out.println("Data Items: " + testPacket.getSize());
 	}
@@ -52,8 +52,7 @@ public class PacketTest {
 		byte[] packetData = testPacket.getAllData();
 		
 		for(int i=0; i<packetData.length; i++) {
-			//assertEquals(DATA[i], packetData[i]);
-			System.out.println(DATA[i] + " :: " + packetData[i]);
+			assertEquals(DATA[i], packetData[i]);
 		}
 	}
 	
@@ -64,8 +63,7 @@ public class PacketTest {
 		byte[] packetData = testPacket.getAllData();
 		
 		for(int i=0; i<packetData.length; i++) {
-			//assertEquals(DATA[i], packetData[i]);
-			System.out.println(DATA[i] + " :: " + packetData[i]);
+			assertEquals(DATA[i], packetData[i]);
 		}
 	}
 }

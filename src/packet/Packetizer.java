@@ -3,14 +3,14 @@ package packet;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.PriorityQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Packetizer {
-	private PriorityQueue<Packet> packetsOut;
+	private LinkedBlockingQueue<Packet> packetsOut;
 	private int packetSize;
 	
 	public Packetizer(int packetSize) {
-		packetsOut = new PriorityQueue<Packet>();
+		packetsOut = new LinkedBlockingQueue<Packet>();
 		this.packetSize = packetSize;
 	}
 	
@@ -25,13 +25,17 @@ public class Packetizer {
 	public void packetize(File f) {
 		FileReader reader;
 		int numParts = (int)(f.length()/(packetSize-Packet.HEADER_SIZE));
+		
+		if(0 != (int)(f.length()%(packetSize-Packet.HEADER_SIZE)))
+				numParts++;
+		
 		try {
 			reader = new FileReader(f);
 			byte[] data = new byte[packetSize];
 			
 			String name = f.getName();
 			data = name.getBytes();
-			packetsOut.add(new Packet(f.hashCode(), 0, numParts, name.length(), data));
+			packetsOut.add(new Packet(f.hashCode(), 0, numParts, data.length, data));
 			
 			for(int i=1; i <= numParts; i++) {
 				char[] readerBuffer = new char[packetSize];

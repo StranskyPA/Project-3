@@ -3,32 +3,27 @@ package Networking;
 import java.net.*;
 import java.io.*;
 
-public class SocketEchoerThread {
+import application.Main;
+
+public class SocketEchoerThread extends Thread{
 	private Socket textSocket;
+	StringBuilder sb = new StringBuilder();
+	private boolean going;
 	
 	public SocketEchoerThread(Socket socket) {
 		this.textSocket = socket;
+		going = true;
 	}
 	
 	public void run() {
-		try {
-            BufferedReader responses =  new BufferedReader (new InputStreamReader(textSocket.getInputStream()));
-            PrintWriter writer = new PrintWriter(textSocket.getOutputStream());
-            writer.println("Connection open.");
-            writer.println("I will echo a single message, then close.");
-
-            StringBuilder sb = new StringBuilder();
-            while (!responses.ready()){}
-            while (responses.ready()) {
-                sb.append(responses.readLine() + '\n');
-            }
-            System.out.println("From: " + textSocket.getInetAddress() + ": " + sb);
-        
-            writer.print(sb);
-            writer.flush();
-            textSocket.close();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        } 
+			System.out.println("DONT GO HERE");
+	}
+	
+	public synchronized void halt() {
+		going = false;
+	}
+	
+	public String getString() {
+		return sb.toString();
 	}
 }

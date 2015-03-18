@@ -1,4 +1,5 @@
 package Networking;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,12 +28,14 @@ public class TalkThread extends Thread {
 	@Override
 	public void run() {
 		Socket s = null;
+		channel = new ArrayBlockingQueue<String>(2, true);
 		try {
+			System.out.println("TalkThread going nao");
 			s = new Socket(host, port);
 			PrintWriter writer = new PrintWriter(s.getOutputStream());
 			writer.print(msg);
 			writer.flush();
-			channel.put("message sent; awaiting response...");
+			//channel.put("message sent; awaiting response...");
 
 			BufferedReader responses = new BufferedReader(new InputStreamReader(s.getInputStream()));
 			while (going) {
@@ -40,12 +43,11 @@ public class TalkThread extends Thread {
 				String line = responses.readLine();
 				if (line != null) {channel.put(line);}
 			}
-			channel.put("Finished");
+			//channel.put("Finished");
 			going = false;
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
             try {
@@ -58,5 +60,9 @@ public class TalkThread extends Thread {
 	
 	public synchronized void halt() {
 		going = false;
+	}
+	
+	public ArrayBlockingQueue<String> getChannel() {
+		return channel;
 	}
 }
