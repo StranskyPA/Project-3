@@ -60,7 +60,7 @@ public class Model {
 		}
 	}
 	
-	public void sendMessage(Text message){
+	public void addMessage(Text message){
 		if (message.getText().length() > 0){
 			Text text = new Text();
 			Text newline = new Text();

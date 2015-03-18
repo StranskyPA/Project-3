@@ -57,7 +57,7 @@
             <TextField fx:id="messageText" layoutX="59.0" layoutY="355.0" onAction="#sendMessage" prefHeight="25.0" prefWidth="444.0" />
             <Button fx:id="send" layoutX="6.0" layoutY="355.0" mnemonicParsing="false" onAction="#sendMessage" text="Send" />
             <Button fx:id="attach" layoutX="5.0" layoutY="387.0" mnemonicParsing="false" onAction="#attachFile" text="Attach" />
-            <Button fx:id="receive" layoutX="255.0" layoutY="387.0" mnemonicParsing="false" onAction="#receiveMessage" text="Recieve Chat" />
+            <Button fx:id="receive" layoutX="255.0" layoutY="387.0" mnemonicParsing="false" onAction="#testReceiveMessage" text="Recieve Chat" />
             <ColorPicker layoutX="103.0" layoutY="387.0" />
       </children>
     </AnchorPane>

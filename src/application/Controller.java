@@ -3,6 +3,8 @@ package application;
 import java.io.File;
 import java.io.IOException;
 
+import packet.Packetizer;
+
 import com.sun.javafx.scene.control.skin.CustomColorDialog;
 
 import javafx.application.Platform;
@@ -52,6 +54,7 @@ public class Controller {
 	private ScrollPane scroll;
 	
 	private Model model = new Model();
+	private Packetizer packetizer = new Packetizer(1024);
 	
 	private Color userColor = Color.BLUE;
 	private Color ReceiveColor = Color.BLACK;
@@ -71,8 +74,15 @@ public class Controller {
 		System.out.println("DONE");
 	}
 	
+	public void receiveMessage(File f){
+		Text text = new Text();
+		String msg = f.toString();
+		text.setText(msg);
+		model.addMessage(text);
+	}
+	
 	@FXML
-	public void receiveMessage(){
+	public void testReceiveMessage(){
 		Text text = new Text();
 		text.setText("This is a test, I am sending you a message ,This is a test, I am sending you a message, This is a test, I am sending you a message");
 		model.receiveMessage(text);
@@ -89,7 +99,8 @@ public class Controller {
 		fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
 		File attachFile = fileChooser.showOpenDialog(applicationBounds.getScene().getWindow());
 		if (attachFile != null){
-			messageText.setText(attachFile.toString());
+			//messageText.setText(attachFile.toString());
+			packetizer.packetize(attachFile);
 		}
 	}
 	
@@ -97,7 +108,7 @@ public class Controller {
 	public void sendMessage(){
 		Text text = new Text();
 		text.setText(messageText.getText());
-		model.sendMessage(text);
+		model.addMessage(text);
 		messageText.clear();
 		chatArea.scrollTo(model.getObservable().size());
 		model.getObservable().get(model.chatIndex).setStroke(userColor);
@@ -139,4 +150,5 @@ public class Controller {
         stage.setScene(new Scene(root, 640, 500));
         stage.show();
 	}
+
 }

@@ -48,7 +48,7 @@ public class Depacketizer {
 		
 		if(p.getPart() == p.getNumParts()) {
 			//objectsOut.add(f);
-			c.recieveMessage(f);
+			c.receiveMessage(f);
 			partialFiles.remove(p.getID());
 		}
 	}
