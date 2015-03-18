@@ -10,9 +10,11 @@ public class Packet{
 	private static final int NUM_PARTS_IDX = 8;
 	private static final int DATA_SIZE_IDX = 12;
 	private static final int DATA_START_IDX = 16;
+	
+	public static final int HEADER_SIZE = DATA_START_IDX;
 
-	public Packet(int id, int part, int totalNumParts, int dataSize, char[] data) {
-		bytes = new byte[data.length + 10];
+	public Packet(int id, int part, int totalNumParts, int dataSize, byte[] data) {
+		bytes = new byte[dataSize + Packet.HEADER_SIZE];
 		
 		bytes[ID_IDX] = (byte)(id >> 24);
 		bytes[ID_IDX+1] = (byte)(id >> 16);
@@ -34,8 +36,8 @@ public class Packet{
 		bytes[DATA_SIZE_IDX+2] = (byte)(dataSize >> 8);
 		bytes[DATA_SIZE_IDX+3] = (byte)(dataSize);
 		
-		for(int i=DATA_START_IDX; i < bytes.length; i++) {
-			bytes[i] = (byte)(data[i - DATA_START_IDX]);
+		for(int i=DATA_START_IDX; i < dataSize; i++) {
+			bytes[i] = data[i - DATA_START_IDX];
 		}
 	}
 	
@@ -79,11 +81,11 @@ public class Packet{
 		return size;
 	}
 	
-	public char[] getAllData() {
-		char[] data = new char[getSize()];
+	public byte[] getAllData() {
+		byte[] data = new byte[getSize()];
 		
 		for(int i=0; i<getSize(); i++) {
-			data[i] = (char)(bytes[i+DATA_START_IDX]);
+			data[i] = bytes[i+DATA_START_IDX];
 		}
 		
 		return data;

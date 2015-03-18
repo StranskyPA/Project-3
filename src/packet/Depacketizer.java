@@ -4,31 +4,21 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Hashtable;
-import java.util.PriorityQueue;
+//import java.util.PriorityQueue;
 
 import application.Controller;
 
 public class Depacketizer {
-	//private PriorityQueue<Object> objectsOut;
-	private Controller c;
+	private Controller GUI_Controller;
 	private Hashtable<Integer, File> partialFiles;
 	
 	public Depacketizer(Controller c) {
-		//objectsOut = new PriorityQueue<Object>();
-		this.c = c;
+		GUI_Controller = c;
 		partialFiles = new Hashtable<Integer, File>();
 	}
 	
-	/*public boolean hasNextFile() {
-		return !objectsOut.isEmpty();
-	}
-	
-	public Object getNextFile() {
-		return objectsOut.remove();
-	}*/
-	
 	public void depacketize(Packet p) {
-		char[] data = p.getAllData();
+		byte[] data = p.getAllData();
 		File f;
 		
 		if(p.getPart() > 0) {
@@ -40,15 +30,15 @@ public class Depacketizer {
 		
 		try {
 			FileWriter writer = new FileWriter(f);
-			writer.write(data);
+			String tempString = new String(data);
+			writer.write(tempString);
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		if(p.getPart() == p.getNumParts()) {
-			//objectsOut.add(f);
-			c.receiveMessage(f);
+			GUI_Controller.receiveMessage(f);
 			partialFiles.remove(p.getID());
 		}
 	}
